@@ -7,8 +7,6 @@ import 'dart:convert';
 List<ShopModels> shopModelsFromJson(String str) =>
     List<ShopModels>.from(json.decode(str).map((x) => ShopModels.fromJson(x)));
 
-
-
 class ShopModels {
   int? id;
   String? title;
@@ -37,8 +35,6 @@ class ShopModels {
         image: json["image"],
         rating: json["rating"] == null ? null : Rating.fromJson(json["rating"]),
       );
-
- 
 }
 
 enum Category { ELECTRONICS, JEWELERY, MEN_S_CLOTHING, WOMEN_S_CLOTHING }
@@ -63,8 +59,6 @@ class Rating {
         rate: json["rate"]?.toDouble(),
         count: json["count"],
       );
-
- 
 }
 
 class EnumValues<T> {

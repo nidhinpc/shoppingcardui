@@ -14,7 +14,9 @@ class HomeScreenController with ChangeNotifier {
         shopModels = responsedata;
         print(shopModels);
       }
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+    }
     notifyListeners();
   }
 }

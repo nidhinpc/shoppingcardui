@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shoppingcardui/controller/controller.dart';
+import 'package:shoppingcardui/controller/category_controller.dart';
+import 'package:shoppingcardui/controller/home_controller.dart';
 import 'package:shoppingcardui/view/homescreen/home_screen.dart';
 
 void main() {
@@ -16,6 +17,9 @@ class Shopping extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (context) => HomeScreenController(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => CategoryController(),
         )
       ],
       child: MaterialApp(debugShowCheckedModeBanner: false, home: HomeScreen()),
