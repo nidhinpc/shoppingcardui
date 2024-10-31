@@ -279,9 +279,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) {
-        context.read<HomeScreenController>().getStore();
-        context.read<CategoryController>().getdata();
+      (timeStamp) async {
+        await context.read<CategoryController>().getdata();
+
+        await context.read<CategoryController>().getStore();
       },
     );
 
@@ -377,7 +378,7 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(width: 20)
           ],
         ),
-        body: Consumer<HomeScreenController>(
+        body: Consumer<CategoryController>(
           builder: (context, providerObj, child) => Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: SingleChildScrollView(
@@ -439,21 +440,38 @@ class _HomeScreenState extends State<HomeScreen> {
                           (index) => Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 8),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.grey,
-                              ),
-                              height: 50,
-                              child: Center(
-                                  child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 10),
-                                child: Text(
-                                  categoryObj.categorylist[index],
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                            child: InkWell(
+                              onTap: () {
+                                context
+                                    .read<CategoryController>()
+                                    .onCategorySelection(index);
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color:
+                                      categoryObj.selectedCategoryIndex == index
+                                          ? Colors.black
+                                          : Colors.grey,
                                 ),
-                              )),
+                                height: 50,
+                                child: Center(
+                                    child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  child: Text(
+                                    categoryObj.categorylist[index],
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          categoryObj.selectedCategoryIndex ==
+                                                  index
+                                              ? Colors.white
+                                              : Colors.black,
+                                    ),
+                                  ),
+                                )),
+                              ),
                             ),
                           ),
                         ),
@@ -461,73 +479,87 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   SizedBox(height: 20),
-                  GridView.builder(
-                    itemCount: providerObj.shopModels?.length ?? 0,
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 10,
-                        mainAxisExtent: 250,
-                        crossAxisSpacing: 10),
-                    itemBuilder: (context, index) => Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Stack(
-                          children: [
-                            GestureDetector(
-                              onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ProductScreen(),
-                                  )),
-                              child: providerObj == true
-                                  ? CircularProgressIndicator()
-                                  : Container(
-                                      height: 180,
+                  providerObj.isProductLoading
+                      ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : GridView.builder(
+                          itemCount: providerObj.shopModels?.length ?? 0,
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  mainAxisSpacing: 10,
+                                  mainAxisExtent: 250,
+                                  crossAxisSpacing: 10),
+                          itemBuilder: (context, index) => Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Stack(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                ProductScreen(),
+                                          ));
+                                    },
+                                    child: providerObj == true
+                                        ? CircularProgressIndicator()
+                                        : Container(
+                                            height: 180,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                image: DecorationImage(
+                                                    fit: BoxFit.cover,
+                                                    image: NetworkImage(
+                                                        providerObj
+                                                                .shopModels?[
+                                                                    index]
+                                                                .image
+                                                                .toString() ??
+                                                            "not data"))),
+                                          ),
+                                  ),
+                                  Positioned(
+                                    right: 10,
+                                    top: 10,
+                                    child: Container(
                                       decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          image: DecorationImage(
-                                              fit: BoxFit.cover,
-                                              image: NetworkImage(providerObj
-                                                      .shopModels?[index].image
-                                                      .toString() ??
-                                                  "no data"))),
+                                        borderRadius: BorderRadius.circular(5),
+                                        color: Colors.white,
+                                      ),
+                                      height: 35,
+                                      width: 35,
+                                      child: Icon(
+                                        Icons.favorite_outline,
+                                        size: 25,
+                                        color: Colors.black,
+                                      ),
                                     ),
-                            ),
-                            Positioned(
-                              right: 10,
-                              top: 10,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: Colors.white,
-                                ),
-                                height: 35,
-                                width: 35,
-                                child: Icon(
-                                  Icons.favorite_outline,
-                                  size: 25,
-                                  color: Colors.black,
-                                ),
+                                  )
+                                ],
                               ),
-                            )
-                          ],
-                        ),
-                        Text(
-                          providerObj.shopModels?[index].title.toString() ?? "",
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                            textAlign: TextAlign.left,
-                            providerObj.shopModels?[index].price.toString() ??
-                                ""),
-                      ],
-                    ),
-                  )
+                              Text(
+                                providerObj.shopModels?[index].title
+                                        .toString() ??
+                                    "",
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                  textAlign: TextAlign.left,
+                                  providerObj.shopModels?[index].price
+                                          .toString() ??
+                                      ""),
+                            ],
+                          ),
+                        )
                 ],
               ),
             ),

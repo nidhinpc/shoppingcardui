@@ -16,9 +16,6 @@ class Shopping extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) => HomeScreenController(),
-        ),
-        ChangeNotifierProvider(
           create: (context) => CategoryController(),
         )
       ],
