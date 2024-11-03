@@ -265,7 +265,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:shoppingcardui/controller/category_controller.dart';
-import 'package:shoppingcardui/controller/home_controller.dart';
+
 import 'package:shoppingcardui/view/product_screen/product_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -504,7 +504,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                ProductScreen(),
+                                                ProductScreen(id: index),
                                           ));
                                     },
                                     child: providerObj == true
