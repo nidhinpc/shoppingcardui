@@ -484,7 +484,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: CircularProgressIndicator(),
                         )
                       : GridView.builder(
-                          itemCount: providerObj.shopModels?.length ?? 0,
+                          itemCount: providerObj.shopModels?.length,
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
                           gridDelegate:
@@ -500,14 +500,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                 children: [
                                   GestureDetector(
                                     onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                ProductScreen(id: index),
-                                          ));
+                                      if (providerObj.shopModels![index].id !=
+                                          null) {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ProductScreen(
+                                                      id: providerObj
+                                                          .shopModels![index]
+                                                          .id!),
+                                            ));
+                                      }
                                     },
-                                    child: providerObj == true
+                                    child: providerObj.isLoading
                                         ? CircularProgressIndicator()
                                         : Container(
                                             height: 180,

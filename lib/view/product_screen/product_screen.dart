@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shoppingcardui/controller/category_controller.dart';
+
+import 'package:shoppingcardui/controller/product_detail_control.dart';
 
 class ProductScreen extends StatefulWidget {
   final int id;
@@ -11,15 +12,14 @@ class ProductScreen extends StatefulWidget {
 }
 
 class _ProductScreenState extends State<ProductScreen> {
-  int? selectedCategoryIndex;
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) {
-        context.read<CategoryController>().selectedCategoryIndex;
+      (timeStamp) async {
+        await context.read<ProductDetailControl>().getProductdetail(widget.id);
       },
     );
-    selectedCategoryIndex = widget.id;
+
     // TODO: implement initState
     super.initState();
   }
@@ -65,160 +65,169 @@ class _ProductScreenState extends State<ProductScreen> {
         body: SafeArea(
             child: Padding(
           padding: EdgeInsets.all(15),
-          child: SingleChildScrollView(child: Consumer<CategoryController>(
-            builder: (context, Catprovider, child) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Stack(
-                    children: [
-                      Container(
-                        height: 400,
-                        width: 400,
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: NetworkImage(
-                                  Catprovider
-                                      .shopModels![selectedCategoryIndex!].image
-                                      .toString(),
+          child: SingleChildScrollView(child: Consumer<ProductDetailControl>(
+            builder: (context, productprovider, child) {
+              return productprovider.isLoading
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(child: CircularProgressIndicator()),
+                      ],
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Stack(
+                          children: [
+                            Container(
+                              height: 400,
+                              width: 400,
+                              decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                      image: NetworkImage(
+                                        productprovider.product!.image
+                                            .toString(),
+                                      ),
+                                      fit: BoxFit.cover),
+                                  borderRadius: BorderRadius.circular(12)),
+                            ),
+                            Positioned(
+                              top: 20,
+                              right: 20,
+                              child: Container(
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8)),
+                                child: Icon(
+                                  Icons.favorite_outline,
+                                  size: 30,
+                                  color: Colors.black,
                                 ),
-                                fit: BoxFit.cover),
-                            borderRadius: BorderRadius.circular(12)),
-                      ),
-                      Positioned(
-                        top: 20,
-                        right: 20,
-                        child: Container(
-                          height: 50,
-                          width: 50,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8)),
-                          child: Icon(
-                            Icons.favorite_outline,
-                            size: 30,
-                            color: Colors.black,
-                          ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    Catprovider.shopModels![selectedCategoryIndex!].title
-                        .toString(),
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
-                  ),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.star,
-                        color: Colors.yellow,
-                        size: 20,
-                      ),
-                      SizedBox(width: 5),
-                      Text(
-                        Catprovider
-                            .shopModels![selectedCategoryIndex!].rating!.rate
-                            .toString(),
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                      ),
-                      SizedBox(width: 25),
-                      Text(
-                        "items - ${Catprovider.shopModels![selectedCategoryIndex!].rating!.count.toString()}",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    Catprovider.shopModels![selectedCategoryIndex!].category
-                        .toString(),
-                    style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Text(
-                    Catprovider.shopModels![selectedCategoryIndex!].description
-                        .toString(),
-                    style: TextStyle(
-                        color: Colors.grey,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    "Choose size",
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black,
-                        fontSize: 20),
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                              5,
-                            ),
-                            border: Border.all(width: 2, color: Colors.grey)),
-                        child: Center(
-                            child: Text(
-                          "S",
+                        SizedBox(height: 10),
+                        Text(
+                          productprovider.product!.title.toString(),
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
-                        )),
-                      ),
-                      SizedBox(width: 10),
-                      Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                              5,
+                              fontWeight: FontWeight.bold, fontSize: 25),
+                        ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.star,
+                              color: Colors.yellow,
+                              size: 20,
                             ),
-                            border: Border.all(width: 2, color: Colors.grey)),
-                        child: Center(
-                            child: Text(
-                          "M",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
-                        )),
-                      ),
-                      SizedBox(width: 10),
-                      Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                              5,
+                            SizedBox(width: 5),
+                            Text(
+                              productprovider.product!.rating!.rate.toString(),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                  color: const Color.fromARGB(255, 97, 94, 94)),
                             ),
-                            border: Border.all(width: 2, color: Colors.grey)),
-                        child: Center(
-                            child: Text(
-                          "L",
+                            SizedBox(width: 25),
+                            Text(
+                              "items - ${productprovider.product!.rating!.count} ",
+                              style: TextStyle(
+                                  color: const Color.fromARGB(255, 95, 92, 92),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          productprovider.product!.description.toString(),
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
-                        )),
-                      )
-                    ],
-                  )
-                ],
-              );
+                              color: Colors.grey,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Text(
+                          productprovider.product!.id.toString(),
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          "Choose size",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                              fontSize: 20),
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Container(
+                              height: 50,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(
+                                    5,
+                                  ),
+                                  border:
+                                      Border.all(width: 2, color: Colors.grey)),
+                              child: Center(
+                                  child: Text(
+                                "S",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20),
+                              )),
+                            ),
+                            SizedBox(width: 10),
+                            Container(
+                              height: 50,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(
+                                    5,
+                                  ),
+                                  border:
+                                      Border.all(width: 2, color: Colors.grey)),
+                              child: Center(
+                                  child: Text(
+                                "M",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20),
+                              )),
+                            ),
+                            SizedBox(width: 10),
+                            Container(
+                              height: 50,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(
+                                    5,
+                                  ),
+                                  border:
+                                      Border.all(width: 2, color: Colors.grey)),
+                              child: Center(
+                                  child: Text(
+                                "L",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20),
+                              )),
+                            )
+                          ],
+                        )
+                      ],
+                    );
             },
           )),
         )),
-        bottomNavigationBar: Consumer<CategoryController>(
+        bottomNavigationBar: Consumer<ProductDetailControl>(
           builder: (context, priceprovider, child) => Padding(
             padding: const EdgeInsets.all(10),
             child: BottomAppBar(
@@ -236,8 +245,7 @@ class _ProductScreenState extends State<ProductScreen> {
                             color: Colors.blueGrey),
                       ),
                       Text(
-                        priceprovider.shopModels![selectedCategoryIndex!].price
-                            .toString(),
+                        priceprovider.product!.price.toString(),
                         style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 20,
