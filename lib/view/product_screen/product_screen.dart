@@ -114,12 +114,19 @@ class _ProductScreenState extends State<ProductScreen> {
                       Icon(
                         Icons.star,
                         color: Colors.yellow,
-                        size: 30,
+                        size: 20,
                       ),
                       SizedBox(width: 5),
                       Text(
-                        Catprovider.shopModels![selectedCategoryIndex!].rating
+                        Catprovider
+                            .shopModels![selectedCategoryIndex!].rating!.rate
                             .toString(),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
+                      ),
+                      SizedBox(width: 25),
+                      Text(
+                        "items - ${Catprovider.shopModels![selectedCategoryIndex!].rating!.count.toString()}",
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 15),
                       ),
