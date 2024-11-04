@@ -250,7 +250,7 @@ class _ProductScreenState extends State<ProductScreen> {
                             color: Colors.blueGrey),
                       ),
                       Text(
-                        priceprovider.product!.price.toString(),
+                        priceprovider.product?.price.toString() ?? "",
                         style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 20,
