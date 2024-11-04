@@ -1,7 +1,10 @@
+import 'package:custom_rating_bar/custom_rating_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shoppingcardui/controller/my_cart_controller.dart';
 
 import 'package:shoppingcardui/controller/product_detail_control.dart';
+import 'package:shoppingcardui/view/my_cart/my_cart.dart';
 
 class ProductScreen extends StatefulWidget {
   final int id;
@@ -117,28 +120,30 @@ class _ProductScreenState extends State<ProductScreen> {
                         ),
                         Row(
                           children: [
-                            Icon(
-                              Icons.star,
-                              color: Colors.yellow,
-                              size: 20,
-                            ),
                             SizedBox(width: 5),
+                            RatingBar.readOnly(
+                              filledIcon: Icons.star,
+                              emptyIcon: Icons.star_border,
+                              initialRating:
+                                  productprovider.product?.rating?.rate ?? 0,
+                              maxRating: 5,
+                            ),
                             Text(
-                              productprovider.product!.rating!.rate.toString(),
+                              "${productprovider.product!.rating!.rate.toString()}/5 Rating",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15,
                                   color: const Color.fromARGB(255, 97, 94, 94)),
                             ),
                             SizedBox(width: 25),
-                            Text(
-                              "items - ${productprovider.product!.rating!.count} ",
-                              style: TextStyle(
-                                  color: const Color.fromARGB(255, 95, 92, 92),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15),
-                            ),
                           ],
+                        ),
+                        Text(
+                          "Rating Count - ${productprovider.product!.rating!.count} ",
+                          style: TextStyle(
+                              color: const Color.fromARGB(255, 95, 92, 92),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15),
                         ),
                         Text(
                           productprovider.product!.description.toString(),
@@ -257,29 +262,42 @@ class _ProductScreenState extends State<ProductScreen> {
                     width: 45,
                   ),
                   Expanded(
-                    child: Container(
-                      height: double.infinity,
-                      decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(12)),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.local_mall_outlined,
-                            color: Colors.white,
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            "Add to Cart",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
-                                color: Colors.white),
-                          )
-                        ],
+                    child: InkWell(
+                      onTap: () {
+                        context
+                            .read<MyCartController>()
+                            .addProduct(priceprovider.product!);
+                        context.read<MyCartController>().getAllProducts();
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (context) => MyCart(),
+                        //     ));
+                      },
+                      child: Container(
+                        height: double.infinity,
+                        decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(12)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.local_mall_outlined,
+                              color: Colors.white,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              "Add to Cart",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                  color: Colors.white),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   )
