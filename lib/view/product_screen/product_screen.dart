@@ -267,7 +267,7 @@ class _ProductScreenState extends State<ProductScreen> {
                         context
                             .read<MyCartController>()
                             .addProduct(priceprovider.product!);
-                        context.read<MyCartController>().getAllProducts();
+
                         Navigator.push(
                             context,
                             MaterialPageRoute(

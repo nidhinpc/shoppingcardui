@@ -12,6 +12,17 @@ class MyCart extends StatefulWidget {
 
 class _MyCartState extends State<MyCart> {
   @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) async {
+        await context.read<MyCartController>().getAllProducts();
+      },
+    );
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,6 +32,7 @@ class _MyCartState extends State<MyCart> {
             children: List.generate(
               context.watch<MyCartController>().storedProducts.length,
               (index) {
+                final cartController = context.watch<MyCartController>();
                 return Container(
                   margin: EdgeInsets.all(8),
                   padding: EdgeInsets.all(8),
@@ -39,10 +51,7 @@ class _MyCartState extends State<MyCart> {
                             decoration: BoxDecoration(
                                 image: DecorationImage(
                                     image: NetworkImage(
-                              context
-                                  .watch<MyCartController>()
-                                  .storedProducts[index]["image"]
-                                  .toString(),
+                              cartController.storedProducts[index]["image"],
                             ))),
                           ),
                           SizedBox(
@@ -53,10 +62,7 @@ class _MyCartState extends State<MyCart> {
                               SizedBox(
                                 width: 200,
                                 child: Text(
-                                  context
-                                      .watch<MyCartController>()
-                                      .storedProducts[index]["name"]
-                                      .toString(),
+                                  cartController.storedProducts[index]["name"],
                                   style: TextStyle(fontSize: 13),
                                 ),
                               ),
@@ -66,10 +72,8 @@ class _MyCartState extends State<MyCart> {
                               SizedBox(
                                 width: 200,
                                 child: Text(
-                                  context
-                                      .watch<MyCartController>()
-                                      .storedProducts[index]["discription"]
-                                      .toString(),
+                                  cartController.storedProducts[index]
+                                      ["discription"],
                                   style: TextStyle(fontSize: 10),
                                 ),
                               )
@@ -78,7 +82,14 @@ class _MyCartState extends State<MyCart> {
                           Column(
                             children: [
                               InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  int currentQty = cartController
+                                      .storedProducts[index]['qty'];
+                                  cartController.incrementQty(
+                                      cartController.storedProducts[index]
+                                          ['productId'],
+                                      currentQty);
+                                },
                                 child: Container(
                                     height: 25,
                                     width: 30,
@@ -93,7 +104,14 @@ class _MyCartState extends State<MyCart> {
                                     .toString(),
                               ),
                               InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  int currentQty = cartController
+                                      .storedProducts[index]['qty'];
+                                  cartController.decrementQty(
+                                      cartController.storedProducts[index]
+                                          ['productId'],
+                                      currentQty);
+                                },
                                 child: Container(
                                     height: 25,
                                     width: 30,
@@ -111,7 +129,11 @@ class _MyCartState extends State<MyCart> {
                         height: 30,
                       ),
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          context.read<MyCartController>().removeProduct(
+                              cartController.storedProducts[index]
+                                  ['productId']);
+                        },
                         child: Container(
                           height: 50,
                           width: 700,
