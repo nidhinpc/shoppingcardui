@@ -80,38 +80,42 @@ class _ProductScreenState extends State<ProductScreen> {
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Stack(
-                          children: [
-                            Container(
-                              height: 400,
-                              width: 400,
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: NetworkImage(
-                                        productprovider.product!.image
-                                            .toString(),
+                        productprovider.product != null
+                            ? Stack(
+                                children: [
+                                  Container(
+                                    height: 400,
+                                    width: 400,
+                                    decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                            image: NetworkImage(
+                                              productprovider.product!.image
+                                                  .toString(),
+                                            ),
+                                            fit: BoxFit.cover),
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
+                                  ),
+                                  Positioned(
+                                    top: 20,
+                                    right: 20,
+                                    child: Container(
+                                      height: 50,
+                                      width: 50,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(8)),
+                                      child: Icon(
+                                        Icons.favorite_outline,
+                                        size: 30,
+                                        color: Colors.black,
                                       ),
-                                      fit: BoxFit.cover),
-                                  borderRadius: BorderRadius.circular(12)),
-                            ),
-                            Positioned(
-                              top: 20,
-                              right: 20,
-                              child: Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(8)),
-                                child: Icon(
-                                  Icons.favorite_outline,
-                                  size: 30,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : SizedBox(),
                         SizedBox(height: 10),
                         Text(
                           productprovider.product!.title.toString(),
